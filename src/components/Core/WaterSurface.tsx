@@ -1,9 +1,6 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh, ShaderMaterial, Color } from 'three';
-import { createNoise2D } from 'simplex-noise';
-
-const noise2D = createNoise2D();
 
 /**
  * Animated water surface using vertex shader displacement

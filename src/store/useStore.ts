@@ -3,11 +3,12 @@ import { Vector3 } from 'three';
 
 export interface Entity {
   id: string;
-  type: 'shark' | 'orca' | 'tuna' | 'diver';
+  type: 'shark' | 'orca' | 'tuna' | 'diver' | 'rock' | 'coral' | 'kelp' | 'blood' | 'fish' | 'seal' | 'human';
   position: Vector3;
   velocity: Vector3;
   health: number;
   state?: string;
+  intensity?: number; // For blood clouds
 }
 
 interface SimulationState {

@@ -1,9 +1,10 @@
-import { useRef, useEffect } from 'react';
+
 import { useFrame } from '@react-three/fiber';
 import { RapierRigidBody } from '@react-three/rapier';
 import { Vector3 } from 'three';
 import { useStore } from '../../store/useStore';
 import { calculateBuoyancyForce, calculateDragForce } from '../../utils/mathHelpers';
+import { getWaveHeight } from '../../utils/gerstnerWaves';
 
 export interface BuoyancyProps {
   rigidBody: React.RefObject<RapierRigidBody>;
@@ -12,34 +13,44 @@ export interface BuoyancyProps {
   dragCoefficient?: number;
   crossSectionalArea?: number;
   centerOfBuoyancy?: Vector3; // Offset from center of mass
+  useDynamicWaves?: boolean; // Enable Gerstner wave sampling
 }
 
 /**
  * Custom hook that applies Archimedes buoyancy and drag forces
  * to a Rapier RigidBody when submerged in water
+ * Now supports dynamic Gerstner wave surface sampling
  */
 export function useBuoyancy({
   rigidBody,
   volume,
-  mass,
+  mass: _mass,
   dragCoefficient = 0.47, // Sphere default
   crossSectionalArea = 1.0,
   centerOfBuoyancy = new Vector3(0, 0, 0),
+  useDynamicWaves = true,
 }: BuoyancyProps) {
   const waterLevel = useStore((state) => state.waterLevel);
   const waterDensity = useStore((state) => state.waterDensity);
   const gravity = useStore((state) => state.gravity);
   const paused = useStore((state) => state.paused);
   
-  useFrame(() => {
+  useFrame(({ clock }) => {
     if (paused || !rigidBody.current) return;
     
     const rb = rigidBody.current;
     const position = rb.translation();
     const velocity = rb.linvel();
     
+    // Calculate dynamic water level at object's position if enabled
+    let actualWaterLevel = waterLevel;
+    if (useDynamicWaves) {
+      const time = clock.getElapsedTime();
+      actualWaterLevel = getWaveHeight(position.x, position.z, time);
+    }
+    
     // Calculate depth below water surface
-    const depth = waterLevel - position.y;
+    const depth = actualWaterLevel - position.y;
     
     // Only apply forces if object is below water
     if (depth > 0) {
@@ -100,6 +111,7 @@ export function Buoyancy({
   dragCoefficient,
   crossSectionalArea,
   centerOfBuoyancy,
+  useDynamicWaves,
 }: BuoyancyProps) {
   useBuoyancy({
     rigidBody,
@@ -108,6 +120,7 @@ export function Buoyancy({
     dragCoefficient,
     crossSectionalArea,
     centerOfBuoyancy,
+    useDynamicWaves,
   });
   
   return null;

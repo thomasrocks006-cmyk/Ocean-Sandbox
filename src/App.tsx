@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Scene } from './components/Core/Scene';
 import { Shark } from './components/Entities/Shark';
+import { Human } from './components/Entities/Human';
 import { HUD } from './components/UI/HUD';
 import { GodModeControls } from './components/UI/GodModeControls';
 
@@ -23,9 +24,11 @@ function App() {
           {/* Spawn initial shark */}
           <Shark position={[0, -5, 0]} />
           
+          {/* Spawn Humans */}
+          <Human position={[10, -1, 5]} type="human" />
+          <Human position={[-10, -1, -5]} type="diver" />
+          
           {/* Add more entities here */}
-          {/* <Shark position={[5, -5, 0]} /> */}
-          {/* <Tuna position={[-5, -3, 0]} /> */}
         </Scene>
       </Canvas>
     </div>

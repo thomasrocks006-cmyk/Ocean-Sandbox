@@ -4,9 +4,12 @@ import { Vector3 } from 'three';
 export enum PredatorState {
   IDLE = 'idle',
   PATROL = 'patrol',
-  SMELL_BLOOD = 'smell_blood',
+  INVESTIGATE = 'investigate',
+  STALK = 'stalk',
   HUNT = 'hunt',
   ATTACK = 'attack',
+  FLEE = 'flee',
+  REST = 'rest',
 }
 
 // Boids algorithm for schooling fish
@@ -62,8 +65,7 @@ export function calculateSeparation(
  */
 export function calculateAlignment(
   velocity: Vector3,
-  neighborVelocities: Vector3[],
-  distance: number
+  neighborVelocities: Vector3[]
 ): Vector3 {
   const sum = new Vector3();
   let count = 0;
@@ -124,7 +126,7 @@ export function applyBoidsAlgorithm(
   const separation = calculateSeparation(position, neighborPositions, params.separationDistance)
     .multiplyScalar(params.separationWeight);
   
-  const alignment = calculateAlignment(velocity, neighborVelocities, params.alignmentDistance)
+  const alignment = calculateAlignment(velocity, neighborVelocities)
     .multiplyScalar(params.alignmentWeight);
   
   const cohesion = calculateCohesion(position, neighborPositions, params.cohesionDistance)

@@ -1,4 +1,4 @@
-import { Environment, Sky } from '@react-three/drei';
+import { Environment } from '@react-three/drei';
 
 /**
  * Realistic lighting setup for underwater scene
